@@ -35,11 +35,10 @@ export default function UserHome({ userData }) {
 
           // Fetch charging stations data
           axios
-            .get(
-              "/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=33.01376&longitude=35.094528&distance=15"
-            )
-            .then((response) => {
-              const chargingStations = response.data;
+          .get(`/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=${latitude}&longitude=${longitude}&distance=15`)
+          .then((response) => {
+            console.log("Charging Stations Data:", response.data);
+            const chargingStations = response.data;
 
               // Create a GeoJSON source for the charging stations
               map.addSource("chargingStations", {
@@ -56,9 +55,11 @@ export default function UserHome({ userData }) {
                       ],
                     },
                     properties: {
-                      title: station.AddressInfo.Title,
-                      operator: station.OperatorInfo.Title,
-                      address: `${station.AddressInfo.AddressLine1}, ${station.AddressInfo.Town}, ${station.AddressInfo.Postcode}`,
+                      title: station.AddressInfo?.Title || "Unknown Title",
+                      operator: station.OperatorInfo?.Title || "Unknown Operator",
+                      address: `${station.AddressInfo?.AddressLine1 || ""}, ${
+                        station.AddressInfo?.Town || ""
+                      }, ${station.AddressInfo?.Postcode || ""}`,
                     },
                   })),
                 },
@@ -136,7 +137,7 @@ export default function UserHome({ userData }) {
         map.remove();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

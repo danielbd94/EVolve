@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-export default function AdminHome({ userData }) {
+
+const AdminHome = ({ userData }) => {
   const [data, setData] = useState([]);
+
   useEffect(() => {
     getAllUser();
   }, []);
@@ -15,6 +17,9 @@ export default function AdminHome({ userData }) {
       .then((data) => {
         console.log(data, "userData");
         setData(data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
       });
   };
 
@@ -22,60 +27,87 @@ export default function AdminHome({ userData }) {
     window.localStorage.clear();
     window.location.href = "./sign-in";
   };
+
   const deleteUser = (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}`)) {
-      fetch("http://localhost:5000/deleteUser", {
-        method: "POST",
-        crossDomain: true,
+      fetch(`http://localhost:5000/deleteUser/${id}`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "Access-Control-Allow-Origin": "*",
         },
-        body: JSON.stringify({
-          userid: id,
-        }),
       })
         .then((res) => res.json())
         .then((data) => {
           alert(data.data);
           getAllUser();
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
         });
-    } else {
     }
+  };
+
+  const tableStyles = {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginTop: "20px",
+  };
+
+  const thStyles = {
+    border: "1px solid #ddd",
+    padding: "8px",
+    textAlign: "left",
+    backgroundColor: "#f2f2f2",
+  };
+
+  const tdStyles = {
+    border: "1px solid #ddd",
+    padding: "8px",
+    backgroundColor: "#f2f2f2",
+  };
+
+  const buttonStyles = {
+    marginTop: "10px",
+    padding: "10px",
   };
 
   return (
     <div className="auth-wrapper">
       <div className="auth-inner" style={{ width: "auto" }}>
-        <h3>Welcom Admin</h3>
-        <table style={{ width: 500 }}>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>User Type</th>
-            <th>Delete</th>
-          </tr>
-          {data.map((i) => {
-            return (
-              <tr>
-                <td>{i.fname}</td>
-                <td>{i.email}</td>
-                <td>{i.userType}</td>
-                <td>
+        <br></br>
+      <h3 style={{ color: "#f2f2f2" }}>Welcome Admin</h3>
+        <table style={tableStyles}>
+          <thead>
+            <tr>
+              <th style={thStyles}>Name</th>
+              <th style={thStyles}>Email</th>
+              <th style={thStyles}>User Type</th>
+              <th style={thStyles}>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((user) => (
+              <tr key={user._id}>
+                <td style={tdStyles}>{user.fname}</td>
+                <td style={tdStyles}>{user.email}</td>
+                <td style={tdStyles}>{user.userType}</td>
+                <td style={tdStyles}>
                   <FontAwesomeIcon
                     icon={faTrash}
-                    onClick={() => deleteUser(i._id, i.fname)}
+                    onClick={() => deleteUser(user._id, user.fname)}
                   />
                 </td>
               </tr>
-            );
-          })}
+            ))}
+          </tbody>
         </table>
-        <button onClick={logOut} className="btn btn-primary">
+        <button onClick={logOut} className="btn btn-primary" style={buttonStyles}>
           Log Out
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default AdminHome;
