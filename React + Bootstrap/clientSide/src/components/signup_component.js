@@ -9,7 +9,7 @@ export default function SignUp() {
   const [secretKey, setSecretKey] = useState("");
 
   const handleSubmit = (e) => {
-    if (userType === "Admin" && secretKey !== "AdarshT") {
+    if (userType === "Admin" && secretKey !== "Evolve") {
       e.preventDefault();
       alert("Invalid Admin");
     } else {
