@@ -5,20 +5,19 @@ import pic from "./images/marker.png";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZGFuaWVsYmQ5NCIsImEiOiJjbG1idHM5azExOWN0M2pvNW85aWZqYzAwIn0.POf6CQrJ6cs-CGcgqCxVvQ";
 
-export default function UserHome({ userData }) {
+const UserHome = ({ userData }) => {
   const [map, setMap] = useState(null);
+  const [routeLength, setRouteLength] = useState(null);
 
   useEffect(() => {
     const initializeMap = async () => {
       try {
-        // Get user's location using navigator.geolocation
         const position = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject);
         });
 
         const { latitude, longitude } = position.coords;
 
-        // Initialize the map
         const map = new mapboxgl.Map({
           container: "map",
           style: "mapbox://styles/mapbox/streets-v11",
@@ -26,21 +25,25 @@ export default function UserHome({ userData }) {
           zoom: 12,
         });
 
-        // Load the custom marker image and add it to the map
         map.on("load", () => {
           map.loadImage(pic, (error, image) => {
             if (error) throw error;
             map.addImage("custom-marker", image);
           });
 
-          // Fetch charging stations data
-          axios
-          .get(`/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=${latitude}&longitude=${longitude}&distance=15`)
-          .then((response) => {
-            console.log("Charging Stations Data:", response.data);
-            const chargingStations = response.data;
+          const navControl = new mapboxgl.NavigationControl({
+            showZoom: true,
+            visualizePitch: true,
+            visualizeCourse: true,
+          });
 
-              // Create a GeoJSON source for the charging stations
+          map.addControl(navControl, "top-left");
+
+          axios
+            .get(`/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=${latitude}&longitude=${longitude}&distance=15`)
+            .then((response) => {
+              const chargingStations = response.data;
+
               map.addSource("chargingStations", {
                 type: "geojson",
                 data: {
@@ -65,58 +68,84 @@ export default function UserHome({ userData }) {
                 },
               });
 
-              // Add a layer for the charging station markers
               map.addLayer({
                 id: "charging-station-markers",
                 type: "symbol",
                 source: "chargingStations",
                 layout: {
-                  "icon-image": "custom-marker", // Use the name of the added image
-                  "icon-size": 0.5, // Adjust the size of the marker as needed
+                  "icon-image": "custom-marker",
+                  "icon-size": 0.5,
                   "icon-allow-overlap": true,
                 },
                 paint: {},
               });
 
-              // Create a popup for the markers
               map.on("click", "charging-station-markers", (e) => {
                 const coordinates = e.features[0].geometry.coordinates.slice();
                 const { title, operator, address } = e.features[0].properties;
 
-                // Create the popup content with a "Get directions" button
-                const popupContent = `
-                  <h3>${title}</h3>
-                  <p>Operator: ${operator}</p>
-                  <p>Address: ${address}</p>
-                  <button type="submit" class="btn btn-primary" id="getDirectionsBtn">Get directions</button>
-                `;
+                axios
+                  .get(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${coordinates[0]},${coordinates[1]}`, {
+                    params: {
+                      geometries: "geojson",
+                      access_token: mapboxgl.accessToken,
+                    },
+                  })
+                  .then((directionsResponse) => {
+                    const route = directionsResponse.data.routes[0].geometry;
+                    const lengthInKm = (directionsResponse.data.routes[0].distance / 1000).toFixed(2);
 
-                // Set the popup content
-                const popup = new mapboxgl.Popup()
-                  .setLngLat(coordinates)
-                  .setHTML(popupContent);
+                    setRouteLength(lengthInKm);
 
-                // Add the popup to the map
-                popup.addTo(map);
+                    const routeSourceId = "route";
 
-                // Handle "Get directions" button click
-                document
-                  .getElementById("getDirectionsBtn")
-                  .addEventListener("click", () => {
-                    // Create a link for navigation with destination coordinates
-                    const navigationLink = `https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}`;
+                    // Check if the source already exists
+                    if (map.getSource(routeSourceId)) {
+                      map.removeLayer(routeSourceId);
+                      map.removeSource(routeSourceId);
+                    }
 
-                    // Open the link in a new tab/window
-                    window.open(navigationLink, "_blank");
+                    map.addSource(routeSourceId, {
+                      type: "geojson",
+                      data: {
+                        type: "Feature",
+                        geometry: route,
+                      },
+                    });
+
+                    map.addLayer({
+                      id: routeSourceId,
+                      type: "line",
+                      source: routeSourceId,
+                      paint: {
+                        "line-width": 2,
+                        "line-color": "blue",
+                      },
+                    });
+
+                    const popupContent = `
+                      <h3>${title}</h3>
+                      <p>Operator: ${operator}</p>
+                      <p>Address: ${address}</p>
+                      <p>Route Length: ${lengthInKm} km</p>
+                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Start Navigation</a>
+                    `;
+
+                    const popup = new mapboxgl.Popup()
+                      .setLngLat(coordinates)
+                      .setHTML(popupContent);
+
+                    popup.addTo(map);
+                  })
+                  .catch((error) => {
+                    console.error("Error fetching route: ", error);
                   });
               });
 
-              // Change the cursor to a pointer when hovering over the markers
               map.on("mouseenter", "charging-station-markers", () => {
                 map.getCanvas().style.cursor = "pointer";
               });
 
-              // Change the cursor back to the default when not hovering over markers
               map.on("mouseleave", "charging-station-markers", () => {
                 map.getCanvas().style.cursor = "";
               });
@@ -131,7 +160,6 @@ export default function UserHome({ userData }) {
 
     initializeMap();
 
-    // Clean up the map when the component unmounts
     return () => {
       if (map) {
         map.remove();
@@ -140,7 +168,7 @@ export default function UserHome({ userData }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <div id="map" style={{ width: "100%", height: "100vh" }}></div>
-  );
-}
+  return <div id="map" style={{ width: "100%", height: "100vh" }}></div>;
+};
+
+export default UserHome;

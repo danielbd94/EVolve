@@ -5,7 +5,7 @@ export default function SignUp() {
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("");
+  const [userType, setUserType] = useState("User");
   const [secretKey, setSecretKey] = useState("");
 
   const handleSubmit = (e) => {
@@ -15,7 +15,6 @@ export default function SignUp() {
     } else {
       e.preventDefault();
 
-      console.log(fname, lname, email, password);
       fetch("http://localhost:5000/register", {
         method: "POST",
         crossDomain: true,
@@ -34,7 +33,6 @@ export default function SignUp() {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data, "userRegister");
           if (data.status === "ok") {
             alert("Registration Successful");
           } else {
@@ -50,22 +48,24 @@ export default function SignUp() {
         <form onSubmit={handleSubmit}>
           <h3>Sign Up</h3>
           <div>
-            Register As
-            <input
-              type="radio"
-              name="UserType"
-              value="User"
-              onChange={(e) => setUserType(e.target.value)}
-            />
-            User
-            <input
-              type="radio"
-              name="UserType"
-              value="Admin"
-              onChange={(e) => setUserType(e.target.value)}
-            />
-            Admin
-          </div>
+  Register As
+  <input
+    type="radio"
+    name="UserType"
+    value="User"
+    onChange={(e) => setUserType(e.target.value)}
+    checked={userType === "User"}
+  />
+  User
+  <input
+    type="radio"
+    name="UserType"
+    value="Admin"
+    onChange={(e) => setUserType(e.target.value)}
+    checked={userType === "Admin"}
+  />
+  Admin
+</div>
           {userType === "Admin" ? (
             <div className="mb-3">
               <label>Secret Key</label>
