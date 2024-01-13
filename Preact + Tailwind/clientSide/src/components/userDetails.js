@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminHome from "./adminHome";
 
 import UserHome from "./userHome";
@@ -22,7 +22,6 @@ export default function UserDetails() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userData");
         if (data.data.userType === "Admin") {
           setAdmin(true);
         }

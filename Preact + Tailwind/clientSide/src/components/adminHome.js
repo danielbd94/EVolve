@@ -15,7 +15,6 @@ const AdminHome = ({ userData }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userData");
         setData(data.data);
       })
       .catch((error) => {

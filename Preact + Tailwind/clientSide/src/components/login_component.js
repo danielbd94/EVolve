@@ -7,7 +7,6 @@ export default function Login() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    console.log(email, password);
     fetch("http://localhost:5000/login-user", {
       method: "POST",
       crossDomain: true,
@@ -23,7 +22,6 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userRegister");
         if (data.status === "ok") {
           window.localStorage.setItem("token", data.data);
           window.localStorage.setItem("loggedIn", true);
