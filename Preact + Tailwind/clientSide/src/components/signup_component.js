@@ -71,7 +71,7 @@ export default function SignUp() {
               <label>Secret Key</label>
               <input
                 type="text"
-                className="form-control"
+                className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
                 placeholder="Secret Key"
                 onChange={(e) => setSecretKey(e.target.value)}
               />
@@ -82,7 +82,7 @@ export default function SignUp() {
             <label>First name</label>
             <input
               type="text"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="First name"
               onChange={(e) => setFname(e.target.value)}
             />
@@ -92,7 +92,7 @@ export default function SignUp() {
             <label>Last name</label>
             <input
               type="text"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="Last name"
               onChange={(e) => setLname(e.target.value)}
             />
@@ -102,7 +102,7 @@ export default function SignUp() {
             <label>Email address</label>
             <input
               type="email"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="Enter email"
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -112,14 +112,14 @@ export default function SignUp() {
             <label>Password</label>
             <input
               type="password"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600">
               Sign Up
             </button>
           </div>

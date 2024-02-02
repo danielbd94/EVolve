@@ -10,16 +10,14 @@
     "@testing-library/react": "^13.1.1",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.0",
-    "bootstrap": "^5.1.3",
     "http-proxy-middleware": "^2.0.6",
     "mapbox-gl": "^2.15.0",
     "preact": "^8.5.3",
     "preact-compat": "^3.19.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
     "react-map-gl": "^7.1.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
+    "tailwindo": "^1.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

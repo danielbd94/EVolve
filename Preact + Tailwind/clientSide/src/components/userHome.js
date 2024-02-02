@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import axios from "axios";
 import pic from "./images/marker.png";
+import NavigationBar from "./NavigationBar";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZGFuaWVsYmQ5NCIsImEiOiJjbG1idHM5azExOWN0M2pvNW85aWZqYzAwIn0.POf6CQrJ6cs-CGcgqCxVvQ";
 
@@ -40,10 +41,9 @@ const UserHome = ({ userData }) => {
           map.addControl(navControl, "top-left");
 
           axios
-            .get(`/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=${latitude}&longitude=${longitude}&distance=15`)
+            .get(`/v3/poi/?output=json&key=94bfa313-7b90-46f7-8cff-60a14b0531d2&latitude=${latitude}&longitude=${longitude}&distance=100`)
             .then((response) => {
               const chargingStations = response.data;
-
               map.addSource("chargingStations", {
                 type: "geojson",
                 data: {
@@ -128,7 +128,7 @@ const UserHome = ({ userData }) => {
                       <p>Operator: ${operator}</p>
                       <p>Address: ${address}</p>
                       <p>Route Length: ${lengthInKm} km</p>
-                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Start Navigation</a>
+                      <a href="https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}" target="_blank" rel="noopener noreferrer" class="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600">Start Navigation</a>
                     `;
 
                     const popup = new mapboxgl.Popup()
@@ -168,7 +168,12 @@ const UserHome = ({ userData }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <div id="map" style={{ width: "100%", height: "100vh" }}></div>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      <NavigationBar />
+      <div id="map" style={{ flex: 1 }}></div>
+    </div>
+  );
 };
 
 export default UserHome;

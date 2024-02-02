@@ -101,7 +101,7 @@ const AdminHome = ({ userData }) => {
             ))}
           </tbody>
         </table>
-        <button onClick={logOut} className="btn btn-primary" style={buttonStyles}>
+        <button onClick={logOut} className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600" style={buttonStyles}>
           Log Out
         </button>
       </div>

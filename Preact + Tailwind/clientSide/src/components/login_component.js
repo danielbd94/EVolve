@@ -41,7 +41,7 @@ export default function Login() {
             <label>Email address</label>
             <input
               type="email"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="Enter email"
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -51,7 +51,7 @@ export default function Login() {
             <label>Password</label>
             <input
               type="password"
-              className="form-control"
+              className="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
               placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -71,7 +71,7 @@ export default function Login() {
           </div>
 
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-blue-600 text-white hover:bg-blue-600 w-full">
               Submit
             </button>
           </div>
