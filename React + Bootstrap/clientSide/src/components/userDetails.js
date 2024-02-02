@@ -27,12 +27,6 @@ export default function UserDetails() {
         }
 
         setUserData(data.data);
-
-        if (data.data === "token expired") {
-          alert("Token expired login again");
-          window.localStorage.clear();
-          window.location.href = "./sign-in";
-        }
       });
   }, []);
 
